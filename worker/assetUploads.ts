@@ -15,6 +15,9 @@ declare global {
 export async function handleAssetUpload(request: IRequest, env: Env) {
 	const objectName = getAssetObjectName(request.params.uploadId)
 
+	// allow all origins to upload assets
+	request.headers.set('access-control-allow-origin', '*');
+	
 	const contentType = request.headers.get('content-type') ?? ''
 	if (!contentType.startsWith('image/') && !contentType.startsWith('video/')) {
 		return error(400, 'Invalid content type')

@@ -14,10 +14,6 @@ declare global {
 // when a user uploads an asset, we store it in the bucket. we only allow image and video assets.
 export async function handleAssetUpload(request: IRequest, env: Env) {
 	const objectName = getAssetObjectName(request.params.uploadId)
-
-	// allow all origins to upload assets
-	// request.headers.set('access-control-allow-origin', '*');
-	
 	const contentType = request.headers.get('content-type') ?? ''
 	if (!contentType.startsWith('image/') && !contentType.startsWith('video/')) {
 		return error(400, 'Invalid content type')
@@ -31,7 +27,12 @@ export async function handleAssetUpload(request: IRequest, env: Env) {
 		httpMetadata: request.headers,
 	})
 
-	return { ok: true }
+	return new Response(JSON.stringify({ ok: true }), {
+		status: 200,
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	})
 }
 
 // when a user downloads an asset, we retrieve it from the bucket. we also cache the response for performance.
